@@ -14,15 +14,14 @@ export function setupServer() {
 
   dotenv.config();
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
+  // app.use(
+  //   pino({
+  //     transport: {
+  //       target: 'pino-pretty',
+  //     },
+  //   }),
+  // );
 
-  app.use(express.json());
   app.use(cors());
 
   app.get('/', (req, res) => {
