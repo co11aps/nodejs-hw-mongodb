@@ -2,7 +2,6 @@ import { SORT_ORDER } from '../constants/index.js';
 
 const parseSortOrder = (sortOrder) => {
   const isKnownOrder = [SORT_ORDER.ASC, SORT_ORDER.DESC].includes(sortOrder);
-  console.log(isKnownOrder);
   if (isKnownOrder) return sortOrder;
   return SORT_ORDER.ASC;
 };
@@ -31,7 +30,6 @@ export const parseSortParams = (query) => {
 
   const parsedSortOrder = parseSortOrder(sortOrder);
   const parsedSortBy = parseSortBy(sortBy);
-  console.log(parsedSortOrder);
 
   return {
     sortOrder: parsedSortOrder,
