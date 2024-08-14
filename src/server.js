@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { env } from './utils/env.js';
 import contactsRouter from './routers/contacts.js';
+import authRouter from './routers/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import cookieParser from 'cookie-parser';
@@ -32,6 +33,7 @@ export function setupServer() {
     res.send('Welcome!');
   });
 
+  app.use(authRouter);
   app.use(contactsRouter);
 
   app.use('*', notFoundHandler);
