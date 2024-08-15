@@ -19,6 +19,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-const UsersCollection = model('User', userSchema);
+const UsersCollection = mongoose.model('User', userSchema);
 
 export { UsersCollection };
