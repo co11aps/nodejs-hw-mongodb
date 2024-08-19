@@ -30,7 +30,7 @@ async function loginUser(email, password) {
     throw createHttpError(401, 'Unauthorized');
   }
 
-  SessionsCollection.deleteOne({ userId: isExistedUser._id });
+  await SessionsCollection.deleteOne({ userId: isExistedUser._id });
 
   const accessToken = crypto.randomBytes(30).toString('base64');
   const refreshToken = crypto.randomBytes(30).toString('base64');
@@ -44,4 +44,8 @@ async function loginUser(email, password) {
   });
 }
 
-export { registerUser, loginUser };
+function logoutUser(sessionId) {
+  return SessionsCollection.deleteOne({ _id: sessionId });
+}
+
+export { registerUser, loginUser, logoutUser };
