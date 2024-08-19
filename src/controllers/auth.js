@@ -45,4 +45,27 @@ async function logout(req, res, next) {
   res.status(204).end();
 }
 
-export { register, login, logout };
+async function refresh(req, res, next) {
+  const session = await AuthService.refreshUserSession(
+    req.cookies.sessionId,
+    req.cookies.refreshToken,
+  );
+
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.send({
+    status: 200,
+    message: 'Refresh completed',
+    data: { accessToken: session.accessToken },
+  });
+}
+
+export { register, login, logout, refresh };
