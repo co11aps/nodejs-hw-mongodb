@@ -33,9 +33,12 @@ export const getAllContactsController = async (req, res) => {
 
 export const getContactByIdController = async (req, res) => {
   const { id } = req.params;
-  const contact = await getContactById(id, req.user._id);
-  if (!contact) {
-    throw createHttpError(404, 'Student not found');
+  const contact = await getContactById(id);
+  if (
+    contact === null ||
+    contact.userId.toString() !== req.user._id.toString()
+  ) {
+    throw createHttpError(404, 'Contact not found');
   }
   res.json({
     status: 200,
@@ -64,7 +67,7 @@ export const createContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { id } = req.params;
-  const deletedContact = await deleteContactService(id);
+  const deletedContact = await deleteContactService(id, req.user._id);
   if (!deletedContact) {
     throw createHttpError(404, 'Contact not found');
   }
@@ -78,9 +81,10 @@ export const upsertContactController = async (req, res, next) => {
     email: req.body.email,
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
+    userId: req.user._id,
   };
   const { id } = req.params;
-  const updatedContact = await updateContactService(id, contact, {
+  const updatedContact = await updateContactService(id, contact, req.user._id, {
     upsert: true,
   });
   if (!updatedContact) {

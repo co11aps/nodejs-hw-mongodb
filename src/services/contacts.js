@@ -43,17 +43,22 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = (contactId, userId) =>
-  ContactsCollection.findOne({ _id: contactId, userId });
+export const getContactById = (contactId) =>
+  ContactsCollection.findById(contactId);
 
 export const createContactService = (newContactData) =>
   ContactsCollection.create(newContactData);
 
-export const deleteContactService = (contactId) =>
-  ContactsCollection.findByIdAndDelete(contactId);
+export const deleteContactService = (contactId, userId) =>
+  ContactsCollection.findByIdAndDelete({ _id: contactId, userId });
 
-export const updateContactService = (contactId, contact, options = {}) =>
-  ContactsCollection.findByIdAndUpdate(contactId, contact, {
+export const updateContactService = (
+  contactId,
+  contact,
+  userId,
+  options = {},
+) =>
+  ContactsCollection.findByIdAndUpdate(contactId, contact, userId, {
     new: true,
     ...options,
   });
