@@ -68,4 +68,26 @@ async function refresh(req, res, next) {
   });
 }
 
-export { register, login, logout, refresh };
+async function requestResetEmail(req, res, next) {
+  await AuthService.requestResetEmail(req.body.email);
+
+  res.send({
+    status: 200,
+    message:
+      'Reset email request sent successfully. Please check your inbox for further instructions.',
+    data: {},
+  });
+}
+
+async function resetPassword(req, res, next) {
+  const { password, token } = req.body;
+  await AuthService.resetPassword(password, token);
+
+  res.send({
+    status: 200,
+    message: 'Password reset completed successfully.',
+    data: {},
+  });
+}
+
+export { register, login, logout, refresh, requestResetEmail, resetPassword };
