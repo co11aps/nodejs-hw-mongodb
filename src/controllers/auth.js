@@ -73,8 +73,7 @@ async function requestResetEmail(req, res, next) {
 
   res.send({
     status: 200,
-    message:
-      'Reset email request sent successfully. Please check your inbox for further instructions.',
+    message: 'Reset password email has been successfully sent.',
     data: {},
   });
 }
@@ -85,7 +84,7 @@ async function resetPassword(req, res, next) {
 
   res.send({
     status: 200,
-    message: 'Password reset completed successfully.',
+    message: 'Password has been successfully reset.',
     data: {},
   });
 }

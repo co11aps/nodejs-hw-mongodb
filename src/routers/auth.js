@@ -40,14 +40,14 @@ router.post('/auth/logout', ctrlWrapper(logout));
 router.post('/auth/refresh', ctrlWrapper(refresh));
 
 router.post(
-  '/auth/request-reset-email',
+  '/auth/send-reset-email',
   jsonParser,
   validateBody(requestResetEmailSchema),
   ctrlWrapper(requestResetEmail),
 );
 
 router.post(
-  '/auth/reset-password',
+  '/auth/reset-pwd',
   jsonParser,
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPassword),

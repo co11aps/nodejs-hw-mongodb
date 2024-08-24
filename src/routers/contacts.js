@@ -15,6 +15,7 @@ import {
 } from '../validation/contacts.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { auth } from '../middlewares/auth.js';
+import { upload } from '../middlewares/multer.js';
 
 const router = express.Router();
 
@@ -33,6 +34,7 @@ router.post(
   '/contacts',
   auth,
   jsonParser,
+  upload.single('photo'),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
@@ -49,6 +51,7 @@ router.put(
   auth,
   isValidId,
   jsonParser,
+  upload.single('photo'),
   validateBody(createContactSchema),
   ctrlWrapper(upsertContactController),
 );
@@ -58,6 +61,7 @@ router.patch(
   auth,
   isValidId,
   jsonParser,
+  upload.single('photo'),
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
