@@ -21,6 +21,8 @@ import {
   TEMPLATE_DIR,
 } from '../constants/index.js';
 
+import { validateCode } from '../utils/googleOAuth2.js';
+
 async function registerUser(user) {
   const isExistedUser = await UsersCollection.findOne({ email: user.email });
 
@@ -31,6 +33,18 @@ async function registerUser(user) {
   user.password = await bcrypt.hash(user.password, 10);
   return UsersCollection.create(user);
 }
+
+const createSession = () => {
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const refreshToken = crypto.randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+  };
+};
 
 async function loginUser(email, password) {
   const isExistedUser = await UsersCollection.findOne({ email });
@@ -45,15 +59,11 @@ async function loginUser(email, password) {
 
   await SessionsCollection.deleteOne({ userId: isExistedUser._id });
 
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const refreshToken = crypto.randomBytes(30).toString('base64');
+  const newSession = createSession();
 
   return SessionsCollection.create({
     userId: isExistedUser._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
-    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+    ...newSession(),
   });
 }
 
@@ -77,12 +87,11 @@ async function refreshUserSession(sessionId, refreshToken) {
 
   await SessionsCollection.deleteOne({ _id: sessionId });
 
+  const newSession = createSession();
+
   return SessionsCollection.create({
     userId: session.userId,
-    accessToken: crypto.randomBytes(30).toString('base64'),
-    refreshToken: crypto.randomBytes(30).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
-    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+    ...newSession(),
   });
 }
 
@@ -154,6 +163,49 @@ async function resetPassword(password, token) {
   }
 }
 
+async function loginOrRegisterWithGoogle(code) {
+  const ticket = await validateCode(code);
+
+  const payload = ticket.getPayload();
+
+  if (typeof payload === 'undefined') {
+    throw createHttpError(401, 'Unauthorized');
+  }
+
+  const user = await UsersCollection.findOne({ email: payload.email });
+
+  if (user === null) {
+    const password = await bcrypt.hash(
+      crypto.randomBytes(30).toString('base64'),
+      10,
+    );
+
+    const createdUser = await UsersCollection.create({
+      email: payload.email,
+      name: payload.name,
+      password,
+    });
+
+    return SessionsCollection.create({
+      userId: createdUser._id,
+      accessToken: crypto.randomBytes(30).toString('base64'),
+      refreshToken: crypto.randomBytes(30).toString('base64'),
+      accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
+      refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+    });
+  }
+
+  await SessionsCollection.deleteOne({ userId: user._id });
+
+  return SessionsCollection.create({
+    userId: user._id,
+    accessToken: crypto.randomBytes(30).toString('base64'),
+    refreshToken: crypto.randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+  });
+}
+
 export {
   registerUser,
   loginUser,
@@ -161,4 +213,5 @@ export {
   refreshUserSession,
   requestResetEmail,
   resetPassword,
+  loginOrRegisterWithGoogle,
 };
