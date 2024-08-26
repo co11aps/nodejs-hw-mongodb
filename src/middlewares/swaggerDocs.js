@@ -11,8 +11,6 @@ export function swaggerDocs() {
       fs.readFileSync(SWAGGER_PATH, { encoding: 'utf-8' }),
     );
 
-    console.log(doc);
-
     return [...swaggerUI.serve, swaggerUI.setup(doc)];
   } catch (err) {
     console.log(err);

@@ -51,7 +51,7 @@ responses:
               example: 404
             message:
               type: string
-              example: Contact with 66995563aac8191253f0bfd8 not found
+              example: Contact with id 66995563aac8191253f0bfd8 not found.
             data:
               type: object
               example: {}

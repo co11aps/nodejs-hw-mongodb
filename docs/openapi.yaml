@@ -10,18 +10,24 @@ tags:
   # теги, що ви будете використовувати
   - name: Contacts
     description: Operations about contacts.
-  - name: Auth
-    description: Auth operations.
+  # - name: Auth
+  # description: Auth operations.
 servers:
   - url: http://localhost:3000
   - url: https://contacts-app-yasp.onrender.com
 paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
   /contacts/{id}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
-  /contacts:
-    post:
-      $ref: ../swagger/paths/contacts/post.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{id}/patch.yaml
 components:
   securitySchemes:
     bearerAuth:

@@ -52,7 +52,8 @@ export const getContactByIdController = async (req, res) => {
 export const createContactController = async (req, res) => {
   const photo = req.file;
 
-  let photoUrl;
+  let photoUrl =
+    'https://res.cloudinary.com/dhnqssr6o/image/upload/v1724568581/la4deqmtjsft3u7novmi.png';
 
   if (photo) {
     if (process.env.ENABLE_CLOUDINARY === 'true') {
@@ -86,7 +87,7 @@ export const deleteContactController = async (req, res) => {
   if (!deletedContact) {
     throw createHttpError(404, 'Contact not found');
   }
-  res.status(204).end();
+  res.status(200).end();
 };
 
 export const upsertContactController = async (req, res, next) => {

@@ -63,7 +63,7 @@ async function loginUser(email, password) {
 
   return SessionsCollection.create({
     userId: isExistedUser._id,
-    ...newSession(),
+    ...newSession,
   });
 }
 
@@ -91,7 +91,7 @@ async function refreshUserSession(sessionId, refreshToken) {
 
   return SessionsCollection.create({
     userId: session.userId,
-    ...newSession(),
+    ...newSession,
   });
 }
 
